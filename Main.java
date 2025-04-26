@@ -1,3 +1,4 @@
+
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -15,15 +16,21 @@ class CustomerQueue {
         if (queue.isEmpty()) {
             System.out.println("Tidak ada pelanggan dalam antrean.");
         } else {
-            System.out.println("Melayani: " + queue.poll());
+            String nama = queue.poll();
+            System.out.println("Melayani pelanggan: " + nama);
+            displayQueue(); 
         }
     }
 
     public void displayQueue() {
         if (queue.isEmpty()) {
-            System.out.println("Antrean kosong.");
+            System.out.println("Antrean kosong");
         } else {
-            System.out.println("Antrean saat ini: " + queue);
+            System.out.println("Pelanggan dalam antrean:");
+            int no = 1;
+            for (String pelanggan : queue) {
+                System.out.println(no++ + ". " + pelanggan);
+            }
         }
     }
 }
@@ -61,78 +68,81 @@ class TextEditor {
     }
 }
 
-class Pasien {
+class Mahasiswa {
     String nama;
-    int umur;
-    String keluhan;
-    Pasien next;
+    String nim;
+    double nilai;
+    Mahasiswa next;
 
-    public Pasien(String nama, int umur, String keluhan) {
+    public Mahasiswa(String nama, String nim, double nilai) {
         this.nama = nama;
-        this.umur = umur;
-        this.keluhan = keluhan;
+        this.nim = nim;
+        this.nilai = nilai;
+        this.next = null;
     }
 }
 
-class AntreanRumahSakit {
-    private Pasien head;
+class ManajemenMahasiswa {
+    private Mahasiswa head;
 
-    public void tambahPasien(String nama, int umur, String keluhan) {
-        Pasien baru = new Pasien(nama, umur, keluhan);
+    public void tambahMahasiswa(String nama, String nim, double nilai) {
+        Mahasiswa baru = new Mahasiswa(nama, nim, nilai);
         if (head == null) {
             head = baru;
         } else {
-            Pasien temp = head;
-            while (temp.next != null) temp = temp.next;
+            Mahasiswa temp = head;
+            while (temp.next != null) {
+                temp = temp.next;
+            }
             temp.next = baru;
         }
-        System.out.println("Pasien " + nama + " berhasil ditambahkan ke antrean.");
+        System.out.println("Mahasiswa berhasil ditambahkan: " + nama);
     }
 
-    public void hapusPasien(String nama) {
+    public void hapusMahasiswa(String nim) {
         if (head == null) {
-            System.out.println("Antrean kosong.");
+            System.out.println("Daftar mahasiswa kosong.");
             return;
         }
-        if (head.nama.equalsIgnoreCase(nama)) {
+        if (head.nim.equalsIgnoreCase(nim)) {
+            System.out.println("Mahasiswa " + head.nama + " berhasil dihapus.");
             head = head.next;
-            System.out.println("Pasien " + nama + " telah dihapus.");
             return;
         }
-        Pasien temp = head;
-        while (temp.next != null && !temp.next.nama.equalsIgnoreCase(nama)) {
+        Mahasiswa temp = head;
+        while (temp.next != null && !temp.next.nim.equalsIgnoreCase(nim)) {
             temp = temp.next;
         }
         if (temp.next != null) {
+            System.out.println("Mahasiswa " + temp.next.nama + " berhasil dihapus.");
             temp.next = temp.next.next;
-            System.out.println("Pasien " + nama + " telah dihapus.");
         } else {
-            System.out.println("Pasien tidak ditemukan.");
+            System.out.println("Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
         }
     }
 
-    public void updatePasien(String nama, int umurBaru, String keluhanBaru) {
-        Pasien temp = head;
+    public void updateMahasiswa(String nim, double nilaiBaru) {
+        Mahasiswa temp = head;
         while (temp != null) {
-            if (temp.nama.equalsIgnoreCase(nama)) {
-                temp.umur = umurBaru;
-                temp.keluhan = keluhanBaru;
-                System.out.println("Data pasien " + nama + " telah diperbarui.");
+            if (temp.nim.equalsIgnoreCase(nim)) {
+                System.out.println("Mengupdate nilai mahasiswa (" + temp.nama + " -> " + nilaiBaru + ")");
+                temp.nilai = nilaiBaru;
                 return;
             }
             temp = temp.next;
         }
-        System.out.println("Pasien tidak ditemukan.");
+        System.out.println("Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
     }
 
-    public void tampilkanPasien() {
+    public void tampilkanMahasiswa() {
         if (head == null) {
-            System.out.println("Antrean pasien kosong.");
+            System.out.println("Daftar mahasiswa kosong.");
             return;
         }
-        Pasien temp = head;
+        Mahasiswa temp = head;
+        System.out.println("--- Daftar Mahasiswa ---");
         while (temp != null) {
-            System.out.println("Nama: " + temp.nama + ", Umur: " + temp.umur + ", Keluhan: " + temp.keluhan);
+            System.out.println("NIM: " + temp.nim + " , Nama: " + temp.nama + " , Nilai: " + temp.nilai);
             temp = temp.next;
         }
     }
@@ -143,14 +153,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         CustomerQueue customerQueue = new CustomerQueue();
         TextEditor textEditor = new TextEditor();
-        AntreanRumahSakit antreanRS = new AntreanRumahSakit();
+        ManajemenMahasiswa manajemenMahasiswa = new ManajemenMahasiswa();
 
         int pilihan = -1;
         while (pilihan != 0) {
             System.out.println("\n=== MENU UTAMA ===");
             System.out.println("1. Antrean Customer Service (Queue)");
             System.out.println("2. Editor Teks Undo/Redo (Stack)");
-            System.out.println("3. Antrean Rumah Sakit (Linked List)");
+            System.out.println("3. Manajemen Data Mahasiswa (Linked List)");
             System.out.println("0. Keluar");
             System.out.print("Pilih menu: ");
             pilihan = scanner.nextInt();
@@ -164,7 +174,7 @@ public class Main {
                     menuStack(scanner, textEditor);
                     break;
                 case 3:
-                    menuLinkedList(scanner, antreanRS);
+                    menuLinkedList(scanner, manajemenMahasiswa);
                     break;
                 case 0:
                     System.out.println("Terima kasih. Program selesai.");
@@ -235,47 +245,51 @@ public class Main {
         } while (pilih != 0);
     }
 
-    public static void menuLinkedList(Scanner scanner, AntreanRumahSakit rs) {
+    public static void menuLinkedList(Scanner scanner, ManajemenMahasiswa mm) {
         int pilih;
         do {
-            System.out.println("\n--- Menu Antrean Rumah Sakit ---");
-            System.out.println("1. Tambah pasien");
-            System.out.println("2. Hapus pasien");
-            System.out.println("3. Update data pasien");
-            System.out.println("4. Tampilkan antrean");
+            System.out.println("\n--- Menu Manajemen Data Mahasiswa ---");
+            System.out.println("1. Tambah mahasiswa");
+            System.out.println("2. Hapus mahasiswa");
+            System.out.println("3. Update data mahasiswa");
+            System.out.println("4. Tampilkan daftar mahasiswa");
             System.out.println("0. Kembali");
             System.out.print("Pilihan: ");
             pilih = scanner.nextInt();
             scanner.nextLine();
+
             switch (pilih) {
                 case 1:
-                    System.out.print("Nama pasien: ");
+                    System.out.print("Nama mahasiswa: ");
                     String nama = scanner.nextLine();
-                    System.out.print("Umur: ");
-                    int umur = scanner.nextInt();
+                    System.out.print("NIM: ");
+                    String nim = scanner.nextLine();
+                    System.out.print("Nilai: ");
+                    double nilai = scanner.nextDouble();
                     scanner.nextLine();
-                    System.out.print("Keluhan: ");
-                    String keluhan = scanner.nextLine();
-                    rs.tambahPasien(nama, umur, keluhan);
+                    mm.tambahMahasiswa(nama, nim, nilai);
                     break;
                 case 2:
-                    System.out.print("Nama pasien yang akan dihapus: ");
-                    String hapus = scanner.nextLine();
-                    rs.hapusPasien(hapus);
+                    System.out.print("Masukkan NIM mahasiswa yang ingin dihapus: ");
+                    String nimHapus = scanner.nextLine();
+                    mm.hapusMahasiswa(nimHapus);
                     break;
                 case 3:
-                    System.out.print("Nama pasien: ");
-                    String update = scanner.nextLine();
-                    System.out.print("Umur baru: ");
-                    int umurBaru = scanner.nextInt();
+                    System.out.print("Masukkan NIM mahasiswa yang ingin diupdate nilainya: ");
+                    String nimUpdate = scanner.nextLine();
+                    System.out.print("Nilai baru: ");
+                    double nilaiBaru = scanner.nextDouble();
                     scanner.nextLine();
-                    System.out.print("Keluhan baru: ");
-                    String keluhanBaru = scanner.nextLine();
-                    rs.updatePasien(update, umurBaru, keluhanBaru);
+                    mm.updateMahasiswa(nimUpdate, nilaiBaru);
                     break;
                 case 4:
-                    rs.tampilkanPasien();
+                    mm.tampilkanMahasiswa();
                     break;
+                case 0:
+                    System.out.println("Kembali ke menu utama...");
+                    break;
+                default:
+                    System.out.println("Pilihan tidak valid.");
             }
         } while (pilih != 0);
     }
