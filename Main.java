@@ -1,39 +1,67 @@
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
 
-class CustomerQueue {
-    private Queue<String> queue = new LinkedList<>();
 
-    public void addCustomer(String name) {
-        queue.add(name);
-        System.out.println(name + " telah ditambahkan ke antrean.");
+class CustomerNode {
+    String name;
+    CustomerNode next;
+
+    CustomerNode(String name) {
+        this.name = name;
+        this.next = null;
+    }
+}
+
+class CustomerQueue {
+    CustomerNode front, rear;
+
+    CustomerQueue() {
+        this.front = this.rear = null;
     }
 
-    public void serveCustomer() {
-        if (queue.isEmpty()) {
-            System.out.println("Tidak ada pelanggan dalam antrean.");
-        } else {
-            String nama = queue.poll();
-            System.out.println("Melayani pelanggan: " + nama);
-            displayQueue(); 
+    void enqueue(String name) {
+        CustomerNode newNode = new CustomerNode(name);
+        if (rear == null) {
+            front = rear = newNode;
+            return;
+        }
+        rear.next = newNode;
+        rear = newNode;
+    }
+
+    void dequeue() {
+        if (front == null) {
+            System.out.println("Antrean kosong.");
+            return;
+        }
+        System.out.println("Melayani pelanggan: " + front.name);
+        front = front.next;
+        if (front == null) {
+            rear = null;
         }
     }
 
-    public void displayQueue() {
-        if (queue.isEmpty()) {
-            System.out.println("Antrean kosong");
-        } else {
-            System.out.println("Pelanggan dalam antrean:");
-            int no = 1;
-            for (String pelanggan : queue) {
-                System.out.println(no++ + ". " + pelanggan);
-            }
+    void displayQueue() {
+        if (front == null) {
+            System.out.println("Antrean kosong.");
+            return;
+        }
+        System.out.println("Pelanggan dalam antrean:");
+        CustomerNode temp = front;
+        int number = 1;
+        while (temp != null) {
+            System.out.println(number++ + ". " + temp.name);
+            temp = temp.next;
         }
     }
 }
+
+
+
+
+
+
 
 class TextEditor {
     private Stack<String> undoStack = new Stack<>();
@@ -187,6 +215,10 @@ public class Main {
         scanner.close();
     }
 
+
+
+
+
     public static void menuQueue(Scanner scanner, CustomerQueue queue) {
         int pilih;
         do {
@@ -202,10 +234,10 @@ public class Main {
                 case 1:
                     System.out.print("Nama pelanggan: ");
                     String nama = scanner.nextLine();
-                    queue.addCustomer(nama);
+                    queue.enqueue(nama);
                     break;
                 case 2:
-                    queue.serveCustomer();
+                    queue.dequeue();
                     break;
                 case 3:
                     queue.displayQueue();
@@ -213,6 +245,10 @@ public class Main {
             }
         } while (pilih != 0);
     }
+
+
+
+
 
     public static void menuStack(Scanner scanner, TextEditor editor) {
         int pilih;
